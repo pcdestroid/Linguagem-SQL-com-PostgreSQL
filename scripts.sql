@@ -558,3 +558,31 @@ UPDATE cliente SET idnacionalidade = 3 WHERE idcliente = 8;
 
 -- 4, Alemã (9, 13)
 UPDATE cliente SET idnacionalidade = 4 WHERE idcliente IN (9, 13);
+
+SELECT * FROM cliente;
+
+--Removendo a coluna complemento
+ALTER TABLE cliente DROP complemento;
+
+-- Adicionando a coluna idcomplemento
+ALTER TABLE cliente ADD idcomplemento integer;
+
+ALTER TABLE cliente ADD CONSTRAINT fk_cln_idcomplemento foreign key (idcomplemento) references complemento (idcomplemento);
+
+select * from complemento;
+
+update cliente set idcomplemento = 1 where idcliente in (1,4,9,13);
+update cliente set idcomplemento = 2 where idcliente in (2,3,7);
+
+SELECT idcliente, idcomplemento FROM cliente;
+
+ALTER TABLE cliente DROP bairro;
+
+ALTER TABLE cliente ADD idbairro integer;
+ALTER TABLE cliente ADD CONSTRAINT fk_cln_idbairro FOREIGN KEY (idbairro) REFERENCES bairro (idbairro);
+
+SELECT * FROM BAIRRO;
+UPDATE cliente SET idbairro = 1 WHERE idcliente in (1,12,13);
+UPDATE cliente SET idbairro = 2 WHERE idcliente in (2,3,6,8,9);
+UPDATE cliente SET idbairro = 3 WHERE idcliente in (4,5);
+UPDATE cliente SET idbairro = 4 WHERE idcliente = 7;
