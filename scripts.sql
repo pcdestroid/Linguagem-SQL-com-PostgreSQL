@@ -567,22 +567,217 @@ ALTER TABLE cliente DROP complemento;
 -- Adicionando a coluna idcomplemento
 ALTER TABLE cliente ADD idcomplemento integer;
 
-ALTER TABLE cliente ADD CONSTRAINT fk_cln_idcomplemento foreign key (idcomplemento) references complemento (idcomplemento);
+-- Adiciona uma restrição de chave estrangeira ("fk_cln_idcomplemento") à tabela "cliente"
+-- para estabelecer uma relação com a tabela "complemento" por meio da coluna "idcomplemento".
+ALTER TABLE cliente ADD CONSTRAINT fk_cln_idcomplemento FOREIGN KEY (idcomplemento) REFERENCES complemento (idcomplemento);
 
-select * from complemento;
+-- Seleciona todos os registros da tabela "complemento".
+SELECT * FROM complemento;
 
-update cliente set idcomplemento = 1 where idcliente in (1,4,9,13);
-update cliente set idcomplemento = 2 where idcliente in (2,3,7);
+-- Atualiza o valor da coluna "idcomplemento" na tabela "cliente" para os clientes com IDs específicos.
+UPDATE cliente SET idcomplemento = 1 WHERE idcliente IN (1,4,9,13);
+UPDATE cliente SET idcomplemento = 2 WHERE idcliente IN (2,3,7);
 
+-- Seleciona as colunas "idcliente" e "idcomplemento" da tabela "cliente".
 SELECT idcliente, idcomplemento FROM cliente;
 
-ALTER TABLE cliente DROP bairro;
+-- Remove a coluna "bairro" da tabela "cliente".
+ALTER TABLE cliente DROP COLUMN bairro;
 
-ALTER TABLE cliente ADD idbairro integer;
+-- Adiciona uma nova coluna "idbairro" à tabela "cliente".
+ALTER TABLE cliente ADD COLUMN idbairro integer;
+
+-- Adiciona uma restrição de chave estrangeira ("fk_cln_idbairro") à tabela "cliente"
+-- para estabelecer uma relação com a tabela "bairro" por meio da coluna "idbairro".
 ALTER TABLE cliente ADD CONSTRAINT fk_cln_idbairro FOREIGN KEY (idbairro) REFERENCES bairro (idbairro);
 
-SELECT * FROM BAIRRO;
-UPDATE cliente SET idbairro = 1 WHERE idcliente in (1,12,13);
-UPDATE cliente SET idbairro = 2 WHERE idcliente in (2,3,6,8,9);
-UPDATE cliente SET idbairro = 3 WHERE idcliente in (4,5);
+-- Seleciona todos os registros da tabela "bairro".
+SELECT * FROM bairro;
+
+-- Atualiza o valor da coluna "idbairro" na tabela "cliente" para os clientes com IDs específicos.
+UPDATE cliente SET idbairro = 1 WHERE idcliente IN (1,12,13);
+UPDATE cliente SET idbairro = 2 WHERE idcliente IN (2,3,6,8,9);
+UPDATE cliente SET idbairro = 3 WHERE idcliente IN (4,5);
 UPDATE cliente SET idbairro = 4 WHERE idcliente = 7;
+
+-- Seleciona todos os campos de todas as linhas da tabela "cliente".
+SELECT * FROM cliente;
+
+-- Cria uma tabela chamada "uf" para armazenar informações das unidades federativas (estados).
+
+CREATE TABLE uf (
+    iduf integer NOT NULL, -- Identificador único da unidade federativa
+    nome varchar(30) NOT NULL, -- Nome da unidade federativa
+    sigla char(2) NOT NULL, -- Sigla da unidade federativa
+
+    -- Define a chave primária da tabela, garantindo que o "iduf" seja único.
+    CONSTRAINT pk_ufd_idunidade_federacao PRIMARY KEY (iduf),
+
+    -- Cria uma restrição única para o campo "nome," garantindo que os nomes sejam exclusivos.
+    CONSTRAINT un_ufd_nome UNIQUE (nome),
+
+    -- Cria uma restrição única para o campo "sigla," garantindo que as siglas sejam exclusivas.
+    CONSTRAINT un_ufd_sigla UNIQUE (sigla)
+);
+
+-- Insere informações sobre as unidades federativas na tabela "uf".
+
+-- Insere o registro para Santa Catarina.
+INSERT INTO uf (iduf, nome, sigla) VALUES (1, 'Santa Catarina', 'SC');
+
+-- Insere o registro para o Paraná.
+INSERT INTO uf (iduf, nome, sigla) VALUES (2, 'Paraná', 'PR');
+
+-- Insere o registro para São Paulo.
+INSERT INTO uf (iduf, nome, sigla) VALUES (3, 'São Paulo', 'SP');
+
+-- Insere o registro para Minas Gerais.
+INSERT INTO uf (iduf, nome, sigla) VALUES (4, 'Minas Gerais', 'MG');
+
+-- Insere o registro para o Rio Grande do Sul.
+INSERT INTO uf (iduf, nome, sigla) VALUES (5, 'Rio Grande do Sul', 'RS');
+
+-- Insere o registro para o Rio de Janeiro.
+INSERT INTO uf (iduf, nome, sigla) VALUES (6, 'Rio de Janeiro', 'RJ');
+
+-- Seleciona todos os registros da tabela "uf" para verificar os dados recém-inseridos.
+SELECT * FROM uf;
+
+-- Cria uma tabela chamada "municipio" para armazenar informações sobre municípios.
+
+-- Define a estrutura da tabela "municipio" com colunas para o identificador único, nome e a referência à unidade federativa.
+CREATE TABLE municipio (
+    idmunicipio integer NOT NULL, -- Identificador único do município
+    nome varchar(30) NOT NULL, -- Nome do município
+    iduf integer NOT NULL, -- Chave estrangeira que se relaciona com a unidade federativa (tabela "uf")
+
+    -- Define a chave primária da tabela, garantindo que o "idmunicipio" seja único.
+    CONSTRAINT pk_mnc_idmunicipio PRIMARY KEY (idmunicipio),
+
+    -- Cria uma restrição única para o campo "nome," garantindo que os nomes dos municípios sejam exclusivos.
+    CONSTRAINT un_mnc_nome UNIQUE (nome),
+
+    -- Estabelece uma chave estrangeira para a coluna "iduf" referenciando a tabela "uf" pela coluna "iduf".
+    CONSTRAINT fk_mnc_iduf FOREIGN KEY (iduf) REFERENCES uf (iduf)
+);
+
+-- Insere informações sobre municípios na tabela "municipio".
+
+-- Insere o registro para "Porto União" relacionado à unidade federativa com ID 1 (Santa Catarina).
+INSERT INTO municipio (idmunicipio, nome, iduf) VALUES (1, 'Porto União', 1);
+-- Insere o registro para "Canoinhas" também relacionado à unidade federativa com ID 1.
+INSERT INTO municipio (idmunicipio, nome, iduf) VALUES (2, 'Canoinhas', 1);
+-- Insere o registro para "Porto Vitória" relacionado à unidade federativa com ID 2 (Paraná).
+INSERT INTO municipio (idmunicipio, nome, iduf) VALUES (3, 'Porto Vitória', 2);
+-- Insere o registro para "General Carneiro" também relacionado à unidade federativa com ID 2.
+INSERT INTO municipio (idmunicipio, nome, iduf) VALUES (4, 'General Carneiro', 2);
+-- Insere o registro para "São Paulo" relacionado à unidade federativa com ID 3.
+INSERT INTO municipio (idmunicipio, nome, iduf) VALUES (5, 'São Paulo', 3);
+-- Insere o registro para "Rio de Janeiro" relacionado à unidade federativa com ID 6.
+INSERT INTO municipio (idmunicipio, nome, iduf) VALUES (6, 'Rio de Janeiro', 6);
+-- Insere o registro para "Uberlândia" relacionado à unidade federativa com ID 4 (Minas Gerais).
+INSERT INTO municipio (idmunicipio, nome, iduf) VALUES (7, 'Uberlândia', 4);
+-- Insere o registro para "Porto Alegre" relacionado à unidade federativa com ID 5 (Rio Grande do Sul).
+INSERT INTO municipio (idmunicipio, nome, iduf) VALUES (8, 'Porto Alegre', 5);
+-- Insere o registro para "União da Vitória" também relacionado à unidade federativa com ID 2.
+INSERT INTO municipio (idmunicipio, nome, iduf) VALUES (9, 'União da Vitória', 2);
+
+-- Seleciona todos os registros da tabela "municipio" para verificar os dados recém-inseridos.
+SELECT * FROM municipio;
+
+-- Seleciona todos os registros da tabela "cliente" para verificar os dados antes das alterações.
+SELECT * FROM cliente;
+
+-- Remove a coluna "municipio" da tabela "cliente".
+ALTER TABLE cliente DROP COLUMN municipio;
+
+-- Remove a coluna "uf" da tabela "cliente".
+ALTER TABLE cliente DROP COLUMN uf;
+
+-- Adiciona uma nova coluna "idmunicipio" à tabela "cliente".
+ALTER TABLE cliente ADD COLUMN idmunicipio integer;
+
+-- Cria uma restrição de chave estrangeira chamada "fk_cliente_idmunicipio" na coluna "idmunicipio" da tabela "cliente",
+-- referenciando a coluna "idmunicipio" na tabela "municipio".
+ALTER TABLE cliente ADD CONSTRAINT fk_cliente_idmunicipio FOREIGN KEY (idmunicipio) REFERENCES municipio (idmunicipio);
+
+-- Seleciona todos os registros da tabela "cliente" após as alterações.
+SELECT * FROM cliente;
+
+-- Atualiza o valor da coluna "idmunicipio" na tabela "cliente" para clientes com IDs específicos.
+UPDATE cliente SET idmunicipio = 1 WHERE idcliente IN (1, 2, 10, 11);
+UPDATE cliente SET idmunicipio = 2 WHERE idcliente IN (3, 12);
+UPDATE cliente SET idmunicipio = 3 WHERE idcliente = 4;
+UPDATE cliente SET idmunicipio = 4 WHERE idcliente = 5;
+UPDATE cliente SET idmunicipio = 5 WHERE idcliente IN (6, 13);
+UPDATE cliente SET idmunicipio = 6 WHERE idcliente = 7;
+UPDATE cliente SET idmunicipio = 7 WHERE idcliente = 8;
+UPDATE cliente SET idmunicipio = 8 WHERE idcliente = 9;
+UPDATE cliente SET idmunicipio = 9 WHERE idcliente IN (14, 15);
+
+-- Seleciona todos os registros da tabela "cliente" após as atualizações.
+SELECT * FROM cliente;
+
+-- Cria uma tabela chamada "fornecedor" para armazenar informações sobre fornecedores.
+
+-- Define a estrutura da tabela "fornecedor" com colunas para o identificador único e o nome do fornecedor.
+CREATE TABLE fornecedor (
+    idfornecedor integer NOT NULL, -- Identificador único do fornecedor
+    nome varchar(50) NOT NULL, -- Nome do fornecedor
+
+    -- Define a chave primária da tabela, garantindo que o "idfornecedor" seja único.
+    CONSTRAINT pk_frn_idfornecedor PRIMARY KEY (idfornecedor),
+
+    -- Cria uma restrição única para o campo "nome," garantindo que os nomes dos fornecedores sejam exclusivos.
+    CONSTRAINT un_frn_none UNIQUE (nome)
+);
+
+-- Insere informações sobre fornecedores na tabela "fornecedor".
+
+-- Insere o registro para o fornecedor "Cap. Computadores" com o ID 1.
+INSERT INTO fornecedor (idfornecedor, nome) VALUES (1, 'Cap. Computadores');
+-- Insere o registro para o fornecedor "AA. Computadores" com o ID 2.
+INSERT INTO fornecedor (idfornecedor, nome) VALUES (2, 'AA. Computadores');
+-- Insere o registro para o fornecedor "BB Máquinas" com o ID 3.
+INSERT INTO fornecedor (idfornecedor, nome) VALUES (3, 'BB Máquinas');
+
+-- Seleciona todos os registros da tabela "fornecedor" para verificar os dados recém-inseridos.
+SELECT * FROM fornecedor;
+
+-- Correção do nome da CONSTRAINT un_frn_none para un_frn_nome
+ALTER TABLE fornecedor
+ADD CONSTRAINT un_frn_nome UNIQUE (nome);
+ALTER TABLE fornecedor
+DROP CONSTRAINT un_frn_none;
+
+-- Seleciona todos os registros da tabela "fornecedor" para verificar os dados antes das alterações.
+SELECT * FROM fornecedor;
+
+-- Cria uma tabela chamada "vendedor" para armazenar informações sobre vendedores.
+
+-- Define a estrutura da tabela "vendedor" com colunas para o identificador único e o nome do vendedor.
+CREATE TABLE vendedor (
+    idvendedor integer NOT NULL, -- Identificador único do vendedor
+    nome varchar(50) NOT NULL, -- Nome do vendedor
+
+    -- Define a chave primária da tabela, garantindo que o "idvendedor" seja único.
+    CONSTRAINT pk_vnd_idvendedor PRIMARY KEY (idvendedor),
+
+    -- Cria uma restrição única para o campo "nome," garantindo que os nomes dos vendedores sejam exclusivos.
+    CONSTRAINT un_vnd_nome UNIQUE (nome)
+);
+
+-- Insere informações sobre vendedores na tabela "vendedor".
+
+-- Insere registros para vendedores com seus respectivos IDs e nomes.
+INSERT INTO vendedor (idvendedor, nome) VALUES (1, 'André');
+INSERT INTO vendedor (idvendedor, nome) VALUES (2, 'Alisson');
+INSERT INTO vendedor (idvendedor, nome) VALUES (3, 'José');
+INSERT INTO vendedor (idvendedor, nome) VALUES (4, 'Ailton');
+INSERT INTO vendedor (idvendedor, nome) VALUES (5, 'Maria');
+INSERT INTO vendedor (idvendedor, nome) VALUES (6, 'Suelem');
+INSERT INTO vendedor (idvendedor, nome) VALUES (7, 'Aline');
+INSERT INTO vendedor (idvendedor, nome) VALUES (8, 'Silvana');
+
+-- Seleciona todos os registros da tabela "vendedor" para verificar os dados recém-inseridos.
+SELECT * FROM vendedor;
