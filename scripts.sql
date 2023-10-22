@@ -781,3 +781,488 @@ INSERT INTO vendedor (idvendedor, nome) VALUES (8, 'Silvana');
 
 -- Seleciona todos os registros da tabela "vendedor" para verificar os dados recém-inseridos.
 SELECT * FROM vendedor;
+
+-- Cria uma tabela chamada "transportadora" para armazenar informações sobre transportadoras.
+
+-- Define a estrutura da tabela "transportadora" com as seguintes colunas:
+-- - "idtransportadora": Um identificador único para a transportadora (não pode ser nulo).
+-- - "idmunicipio": Uma referência ao município relacionado (pode ser nulo).
+-- - "nome": O nome da transportadora (não pode ser nulo e deve ser único).
+-- - "logradouro": O endereço ou logradouro da transportadora.
+-- - "numero": O número do endereço da transportadora.
+
+CREATE TABLE transportadora (
+    idtransportadora integer NOT NULL, -- Identificador único da transportadora
+    idmunicipio integer, -- Referência ao município relacionado (pode ser nulo)
+    nome varchar (50) NOT NULL, -- Nome da transportadora (deve ser único)
+    logradouro varchar (50), -- Endereço ou logradouro da transportadora
+    numero varchar (10), -- Número do endereço da transportadora
+
+    -- Define a chave primária da tabela, garantindo que "idtransportadora" seja único.
+    CONSTRAINT pk_trn_idtransportadora PRIMARY KEY (idtransportadora),
+
+    -- Cria uma chave estrangeira que faz referência à coluna "idmunicipio" na tabela "municipio".
+    CONSTRAINT fk_trn_idmuniripio FOREIGN KEY (idmunicipio) REFERENCES municipio (idmunicipio),
+
+    -- Cria uma restrição única na coluna "nome" para garantir que os nomes das transportadoras sejam exclusivos.
+    CONSTRAINT un_trn_nome UNIQUE (nome)
+);
+
+-- Seleciona todos os registros da tabela "municipio" para verificar os dados.
+
+SELECT * FROM municipio;
+
+-- Insere informações sobre transportadoras na tabela "transportadora".
+
+-- Insere o registro para a transportadora "BR. Transportes" com o ID 1, referência ao município 9, logradouro e número.
+INSERT INTO transportadora (idtransportadora, idmunicipio, nome, logradouro, numero) VALUES (1, 9, 'BR. Transportes', 'Rua das Limas', '01');
+
+-- Insere o registro para a transportadora "União Transportes" com o ID 2 e referência ao município 5.
+INSERT INTO transportadora (idtransportadora, idmunicipio, nome) VALUES (2, 5, 'União Transportes');
+
+-- Seleciona todos os registros da tabela "transportadora" para verificar os dados inseridos.
+SELECT * FROM transportadora;
+
+-- Cria uma tabela chamada "produto" para armazenar informações sobre produtos.
+
+-- Define a estrutura da tabela "produto" com as seguintes colunas:
+-- - "idproduto": Um identificador único para o produto (não pode ser nulo).
+-- - "idfornecedor": Uma referência ao fornecedor do produto (não pode ser nulo).
+-- - "nome": O nome do produto (não pode ser nulo).
+-- - "valor": O valor do produto (não pode ser nulo).
+
+CREATE TABLE produto (
+    idproduto integer NOT NULL, -- Identificador único do produto
+    idfornecedor integer NOT NULL, -- Referência ao fornecedor do produto
+    nome varchar (50) NOT NULL, -- Nome do produto
+    valor FLOAT NOT NULL, -- Valor do produto
+
+    -- Define a chave primária da tabela, garantindo que "idproduto" seja único.
+    CONSTRAINT pk_prd_idproduto PRIMARY KEY (idproduto),
+
+    -- Cria uma chave estrangeira que faz referência à coluna "idfornecedor" na tabela "fornecedor".
+    CONSTRAINT fk_prd_idfornecedor FOREIGN KEY (idfornecedor) REFERENCES fornecedor (idfornecedor)
+);
+
+
+-- Seleciona todos os registros da tabela "produto" para verificar os dados existentes.
+
+SELECT * FROM produto;
+
+-- Insere informações sobre produtos na tabela "produto".
+
+-- Insere o registro para o produto "Microcomputador" com o ID 1, referência ao fornecedor 1 e valor de 800.
+INSERT INTO produto (idproduto, idfornecedor, nome, valor) VALUES (1, 1, 'Microcomputador', '800');
+
+-- Insere o registro para o produto "Monitor" com o ID 2, referência ao fornecedor 1 e valor de 500.
+INSERT INTO produto (idproduto, idfornecedor, nome, valor) VALUES (2, 1, 'Monitor', '500');
+
+-- Insere o registro para o produto "Placa mãe" com o ID 3, referência ao fornecedor 2 e valor de 200.
+INSERT INTO produto (idproduto, idfornecedor, nome, valor) VALUES (3, 2, 'Placa mãe', '200');
+
+-- Insere o registro para o produto "HD" com o ID 4, referência ao fornecedor 2 e valor de 150.
+INSERT INTO produto (idproduto, idfornecedor, nome, valor) VALUES (4, 2, 'HD', '150');
+
+-- Insere o registro para o produto "Placa de vídeo" com o ID 5, referência ao fornecedor 2 e valor de 200.
+INSERT INTO produto (idproduto, idfornecedor, nome, valor) VALUES (5, 2, 'Placa de vídeo', '200');
+
+-- Insere o registro para o produto "Memória RAM" com o ID 6, referência ao fornecedor 3 e valor de 100.
+INSERT INTO produto (idproduto, idfornecedor, nome, valor) VALUES (6, 3, 'Memória RAM', '100');
+
+-- Insere o registro para o produto "Gabinete" com o ID 7, referência ao fornecedor 1 e valor de 35.
+INSERT INTO produto (idproduto, idfornecedor, nome, valor) VALUES (7, 1, 'Gabinete', '35');
+
+-- Seleciona todos os registros da tabela "produto" para verificar os dados recém-inseridos.
+SELECT * FROM produto;
+
+-- Cria uma tabela chamada "pedido" para armazenar informações sobre pedidos.
+
+-- Define a estrutura da tabela "pedido" com as seguintes colunas:
+-- - "idpedido": Um identificador único para o pedido (não pode ser nulo).
+-- - "idcliente": Uma referência ao cliente que fez o pedido (não pode ser nulo).
+-- - "idtransportadora": Uma referência à transportadora responsável pelo pedido (pode ser nulo).
+-- - "idvendedor": Uma referência ao vendedor que atendeu o pedido (não pode ser nulo).
+-- - "data_pedido": A data em que o pedido foi feito (não pode ser nulo).
+-- - "valor": O valor total do pedido (não pode ser nulo).
+
+CREATE TABLE pedido (
+    idpedido integer NOT NULL, -- Identificador único do pedido
+    idcliente integer NOT NULL, -- Referência ao cliente que fez o pedido
+    idtransportadora integer, -- Referência à transportadora responsável pelo pedido (pode ser nulo)
+    idvendedor integer NOT NULL, -- Referência ao vendedor que atendeu o pedido
+    data_pedido date NOT NULL, -- Data em que o pedido foi feito
+    valor float NOT NULL, -- Valor total do pedido
+
+    -- Define a chave primária da tabela, garantindo que "idpedido" seja único.
+    CONSTRAINT pk_pdd_idpedido PRIMARY KEY (idpedido),
+
+    -- Cria uma chave estrangeira que faz referência à coluna "idcliente" na tabela "cliente".
+    CONSTRAINT fk_pdd_idcliente FOREIGN KEY (idcliente) REFERENCES cliente (idcliente),
+
+    -- Cria uma chave estrangeira que faz referência à coluna "idtransportadora" na tabela "transportadora".
+    CONSTRAINT fk_pdd_idtransportadora FOREIGN KEY (idtransportadora) REFERENCES transportadora (idtransportadora),
+
+    -- Cria uma chave estrangeira que faz referência à coluna "idvendedor" na tabela "vendedor".
+    CONSTRAINT fk_pdd_idvendedor FOREIGN KEY (idvendedor) REFERENCES vendedor (idvendedor)
+);
+
+-- Seleciona todos os registros da tabela "pedido" para verificar a estrutura da tabela.
+SELECT * FROM pedido;
+
+-- Seleciona todos os registros da tabela "cliente" para verificar os dados dos clientes.
+SELECT * FROM cliente;
+
+-- Seleciona todos os registros da tabela "transportadora" para verificar os dados das transportadoras.
+SELECT * FROM transportadora;
+
+-- Seleciona todos os registros da tabela "vendedor" para verificar os dados dos vendedores.
+SELECT * FROM vendedor;
+
+-- Atualiza o nome da transportadora com ID 1 para 'BS. Transportes'.
+UPDATE transportadora SET nome ='BS. Transportes' WHERE idtransportadora = 1;
+
+-- Atualiza o nome da transportadora com ID 2 para 'União Transportes'.
+UPDATE transportadora SET nome ='União Transportes' WHERE idtransportadora = 2;
+
+-- Atualiza o nome do cliente com ID 1 para 'Manoel'.
+UPDATE cliente SET nome ='Manoel' WHERE idcliente = 1;
+
+-- Insere registros na tabela "pedido" com informações como ID do pedido, data, valor, ID do cliente, ID da transportadora e ID do vendedor.
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (1, '2008-04-01', 1300, 1, 1, 1);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (2, '2008-04-01', 500, 1, 1, 1);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (3, '2008-04-02', 300, 11, 2, 5);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (4, '2008-04-05', 1000, 8, 1, 7);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (5, '2008-04-06', 200, 9, 2, 6);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (6, '2008-04-06', 1985, 10, 1, 6);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (7, '2008-04-06', 800, 3, 1, 7);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (8, '2008-04-06', 175, 3, null, 7);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (9, '2008-04-07', 1300, 12, null, 8);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (10, '2008-04-10', 200, 6, 1, 8);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (11, '2008-04-15', 300, 15, 2, 1);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (12, '2008-04-20', 300, 15, 2, 5);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (13, '2008-04-20', 350, 9, 1, 7);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (14, '2008-04-23', 300, 2, 1, 5);
+
+INSERT INTO pedido (idpedido, data_pedido, valor, idcliente, idtransportadora, idvendedor)
+VALUES (15, '2008-04-25', 200, 11, null, 5);
+
+-- Seleciona todos os registros da tabela "pedido" para verificar os dados inseridos.
+SELECT * FROM pedido;
+
+-- Cria uma tabela chamada "pedido_produto" para registrar os produtos associados a pedidos.
+
+-- Define a estrutura da tabela "pedido_produto" com as seguintes colunas:
+-- - "idpedido": Uma referência ao pedido ao qual o produto está associado (não pode ser nulo).
+-- - "idproduto": Uma referência ao produto associado ao pedido (não pode ser nulo).
+-- - "quantidade": A quantidade do produto incluída no pedido (não pode ser nulo).
+-- - "valor_unitario": O valor unitário do produto no pedido (não pode ser nulo).
+
+CREATE TABLE pedido_produto (
+    idpedido integer NOT NULL, -- Referência ao pedido
+    idproduto integer NOT NULL, -- Referência ao produto
+    quantidade integer NOT NULL, -- Quantidade do produto no pedido
+    valor_unitario float NOT NULL, -- Valor unitário do produto no pedido
+
+    -- Define a chave primária da tabela, composta pelas colunas "idpedido" e "idproduto" para garantir a unicidade das associações.
+    CONSTRAINT pk_pdp_idpedidoproduto PRIMARY KEY (idpedido, idproduto),
+
+    -- Cria uma chave estrangeira que faz referência à coluna "idpedido" na tabela "pedido".
+    CONSTRAINT fk_pdp_idpedido FOREIGN KEY (idpedido) REFERENCES pedido (idpedido),
+
+    -- Cria uma chave estrangeira que faz referência à coluna "idproduto" na tabela "produto".
+    CONSTRAINT fk_pdp_idprodut FOREIGN KEY (idproduto) REFERENCES produto (idproduto)
+);
+
+-- Seleciona todos os registros da tabela "pedido_produto" para verificar a estrutura da tabela.
+
+SELECT * FROM pedido_produto;
+
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(1,1,1,800);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(1,2,1,500);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(2,2,1,500);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(3,4,2,150);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(4,1,1,800);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(4,3,1,200);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(5,3,1,200);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(6,1,1,800);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(6,7,1,35);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(6,5,1,200);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(6,4,1,150);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(7,1,1,800);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(8,7,5,35);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(9,1,1,800);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(9,2,1,500);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(10,5,1,200);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(11,5,1,200);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(11,6,1,100);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(12,2,1,500);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(13,3,1,200);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(13,4,1,150);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(14,6,3,100);
+INSERT INTO pedido_produto (idpedido, idproduto, quantidade, valor_unitario) values
+(15,3,1,200);
+
+SELECT * FROM pedido_produto;
+
+--Exercícios – consultas simples
+
+--1. Somente o nome de todos os vendedores em ordem alfabética.
+SELECT nome FROM vendedor ORDER BY nome ASC;
+
+--2. Os produtos que o preço seja maior que R$200,00, em ordem crescente pelo preço.
+SELECT nome, valor FROM produto WHERE valor > 200.00 ORDER BY valor ASC;
+
+--3. O nome do produto, o preço e o preço reajustado em 10%, ordenado pelo nome do produto.
+SELECT nome, valor, valor * 1.1 AS reajuste FROM produto ORDER BY nome ASC;
+SELECT nome, valor, valor + (valor * 10)/100 AS reajuste FROM produto ORDER BY nome ASC;
+
+--4. Os municípios do Rio Grande do Sul.
+SELECT * FROM municipio WHERE iduf = 5;
+SELECT * FROM uf;
+
+--5. Os pedidos feitos entre 10/04/2008 e 25/04/2008 ordenado pelo valor.
+SELECT * FROM pedido WHERE data_pedido BETWEEN '2008-04-10' AND '2008-04-25' order by valor;
+
+--6. Os pedidos que o valor esteja entre R$1.000,00 e R$1.500,00.
+SELECT * FROM pedido WHERE valor BETWEEN 100 AND 500;
+
+--7. Os pedidos que o valor não esteja entre R$100,00 e R$500,00.
+SELECT * FROM pedido WHERE valor NOT BETWEEN 100 AND 500;
+
+
+--8. Os pedidos do vendedor André ordenado pelo valor em ordem decrescente.
+SELECT * FROM vendedor;
+SELECT * FROM pedido WHERE idvendedor = 1 ORDER BY valor DESC;
+
+--9. Os pedidos do cliente Manoel ordenado pelo valor em ordem crescente.
+SELECT * FROM cliente;
+SELECT * FROM pedido WHERE idcliente = 1 ORDER BY valor;
+
+--10. Os pedidos da cliente Jéssica que foram feitos pelo vendedor André.
+SELECT * FROM pedido WHERE idcliente = 15 AND idvendedor = 1;
+
+--11. Os pedidos que foram transportados pela transportadora União Transportes.
+SELECT * FROM pedido;
+SELECT * FROM transportadora;
+SELECT * FROM pedido WHERE idtransportadora = 2;
+
+--12. Os pedidos feitos pela vendedora Maria ou pela vendedora Aline.
+SELECT * FROM vendedor;
+SELECT * FROM pedido WHERE idvendedor = 5 OR idvendedor = 7;
+
+--13. Os clientes que moram em União da Vitória ou Porto União.
+SELECT * FROM municipio;
+SELECT * FROM cliente WHERE idmunicipio = 1 OR idmunicipio = 9;
+
+--14. Os clientes que não moram em União da Vitória e nem em Porto União.
+SELECT * FROM cliente WHERE idmunicipio <> 1 AND idmunicipio <> 9;
+
+--15. Os clientes que não informaram o logradouro.
+SELECT * FROM cliente WHERE logradouro IS null;
+
+--16. Os clientes que moram em avenidas.
+SELECT * FROM cliente WHERE logradouro LIKE 'Av%';
+
+--17. Os vendedores que o nome começa com a letra S.
+SELECT * FROM vendedor WHERE nome LIKE 'S%';
+
+--18. Os vendedores que o nome termina com a letra A.
+SELECT * FROM vendedor WHERE nome LIKE '%a';
+
+--19. Os vendedores que o nome não começa com a letra A.
+SELECT * FROM vendedor WHERE nome NOT LIKE 'A%';
+
+--20. Os municípios que começam com a letra P e são de Santa Catarina.
+SELECT * FROM municipio WHERE nome LIKE 'P%' AND iduf = 1;
+
+--21. As transportadoras que informaram o endereço.
+SELECT * FROM transportadora WHERE logradouro IS NOT null;
+
+--22. Os itens do pedido 01.
+SELECT * FROM pedido_produto WHERE idpedido = 1;
+
+--23. Os itens do pedido 06 ou do pedido 10.
+SELECT * FROM pedido_produto WHERE idpedido = 6 OR idpedido = 10;
+
+-- Funções agregadas
+
+-- Calcula a média dos valores na coluna "valor" da tabela "pedido".
+SELECT AVG(valor) FROM pedido;
+
+-- Conta o número de registros na coluna "idmunicipio" da tabela "municipio".
+SELECT COUNT(idmunicipio) FROM municipio;
+
+-- Conta o número total de registros na tabela "municipio".
+SELECT COUNT(*) FROM municipio;
+
+-- Seleciona todos os registros da tabela "transportadora".
+SELECT * FROM transportadora;
+
+-- Conta o número de registros na coluna "logradouro" da tabela "transportadora".
+SELECT COUNT(logradouro) FROM transportadora;
+
+-- Seleciona todos os registros da tabela "municipio".
+SELECT * FROM municipio;
+
+-- Conta o número de registros na coluna "idmunicipio" da tabela "municipio" onde "iduf" é igual a 2.
+SELECT COUNT(idmunicipio) FROM municipio WHERE iduf = 2;
+
+-- Seleciona o valor máximo na coluna "valor" da tabela "pedido".
+SELECT MAX(valor) FROM pedido;
+
+-- Seleciona o valor mínimo na coluna "valor" da tabela "pedido".
+SELECT MIN(valor) FROM pedido;
+
+-- Calcula a soma dos valores na coluna "valor" da tabela "pedido".
+SELECT SUM(valor) FROM pedido;
+
+-- Calcula a soma dos valores na coluna "valor" da tabela "pedido" para cada "idcliente" e agrupa os resultados.
+SELECT idcliente, SUM(valor) FROM pedido GROUP BY idcliente;
+
+-- Calcula a soma dos valores na coluna "valor" da tabela "pedido" para cada "idcliente" e filtra os resultados onde a soma é maior que 500.
+SELECT idcliente, SUM(valor) FROM pedido GROUP BY idcliente HAVING SUM(valor) > 500;
+
+
+--Exercícios – funções agregadas
+
+--1. A média dos valores de vendas dos vendedores que venderam mais que R$ 200,00.
+SELECT idvendedor, AVG(valor) FROM pedido GROUP BY idvendedor HAVING SUM(valor) > 200;
+
+--2. Os vendedores que venderam mais que R$ 1500,00.
+SELECT idvendedor, sum(valor) FROM pedido GROUP BY idvendedor HAVING SUM(valor) > 1500;
+
+--3. O somatório das vendas de cada vendedor.
+SELECT idvendedor, sum(valor) FROM pedido GROUP BY idvendedor
+
+--4. A quantidade de municípios.
+SELECT count(idmunicipio) FROM municipio
+
+--5. A quantidade de municípios que são do Paraná ou de Santa Catarina.
+SELECT * FROM uf;
+SELECT COUNT(idmunicipio) FROM municipio WHERE iduf = 1 OR iduf = 2;
+
+--6. A quantidade de municípios por estado.
+SELECT iduf, COUNT(idmunicipio) FROM municipio GROUP BY iduf;
+
+--7. A quantidade de clientes que informaram o logradouro.
+SELECT COUNT(idcliente) FROM cliente WHERE LOGRADOURO IS NOT null;
+
+--8. A quantidade de clientes por município.
+SELECT idmunicipio, COUNT(idcliente) FROM cliente GROUP BY idmunicipio;
+
+--9. A quantidade de fornecedores.
+SELECT * FROM fornecedor;
+SELECT COUNT(idfornecedor) FROM fornecedor;
+
+--10. A quantidade de produtos por fornecedor.
+SELECT * FROM produto;
+SELECT idfornecedor, COUNT(idproduto) FROM produto GROUP BY idfornecedor;
+
+--11. A média de preços dos produtos do fornecedor Cap. Computadores.
+
+--12. O somatório dos preços de todos os produtos.
+
+--13. O nome do produto e o preço somente do produto mais caro.
+
+--14. O nome do produto e o preço somente do produto mais barato.
+
+--15. A média de preço de todos os produtos.
+
+--16. A quantidade de transportadoras.
+
+--17. A média do valor de todos os pedidos.
+
+--18. O somatório do valor do pedido agrupado por cliente.
+
+--19. O somatório do valor do pedido agrupado por vendedor.
+
+--20. O somatório do valor do pedido agrupado por transportadora.
+
+--21. O somatório do valor do pedido agrupado pela data.
+
+--22. O somatório do valor do pedido agrupado por cliente, vendedor e transportadora.
+
+--23. O somatório do valor do pedido que esteja entre 01/04/2008 e 10/12/2009 e que seja maior que R$ 200,00.
+
+--24. A média do valor do pedido do vendedor André.
+
+--25. A média do valor do pedido da cliente Jéssica.
+
+--26. A quantidade de pedidos transportados pela transportadora BS. Transportes.
+
+--27. A quantidade de pedidos agrupados por vendedor.
+
+--28. A quantidade de pedidos agrupados por cliente.
+
+--29. A quantidade de pedidos entre 15/04/2008 e 25/04/2008.
+
+--30. A quantidade de pedidos que o valor seja maior que R$ 1.000,00.
+
+--31. A quantidade de microcomputadores vendida.
+
+--32. A quantidade de produtos vendida agrupado por produto.
+
+--33. O somatório do valor dos produtos dos pedidos, agrupado por pedido.
+
+--34. A quantidade de produtos agrupados por pedido.
+
+--35. O somatório do valor total de todos os produtos do pedido.
+
+--36. A média dos produtos do pedido 6.
+
+--37. O valor do maior produto do pedido.
+
+--38. O valor do menor produto do pedido.
+
+--39. O somatório da quantidade de produtos por pedido.
+
+--40. O somatório da quantidade de todos os produtos do pedido.
