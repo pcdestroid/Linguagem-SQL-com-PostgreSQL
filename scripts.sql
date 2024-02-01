@@ -1394,21 +1394,67 @@ left outer join
 select
 	pdt.nome as produto,
 	pdp.quantidade,
-	pdp.valor_unitario	
+	pdp.valor_unitario
 from
 	pedido_produto pdp
 left outer join
 	produto pdt on pdp.idproduto = pdt.idproduto
 
 --6. O nome dos clientes e a data do pedido dos clientes que fizeram algum pedido (ordenado pelo nome do cliente).
-
+select
+	cln.nome,
+	pdd.data_pedido
+from
+	cliente cln
+inner join
+	pedido pdd on pdd.idcliente = cln.idcliente
+order by
+	cln.nome
+	
 --7. O nome dos clientes e a data do pedido de todos os clientes, independente se tenham feito pedido (ordenado pelo nome do cliente).
+select
+	cln.nome,
+	pdd.data_pedido
+from
+	cliente cln
+left outer join
+	pedido pdd on pdd.idcliente = cln.idcliente
+order by
+	cln.nome
 
 --8. O nome da cidade e a quantidade de clientes que moram naquela cidade.
+select
+	mnc.nome as municipio,
+	count(cln.idcliente) as quantidade
+from 
+	cliente cln
+inner join
+	municipio mnc on cln.idmunicipio = mnc.idmunicipio
+group by
+	mnc.nome
+
 
 --9. O nome do fornecedor e a quantidade de produtos de cada fornecedor.
+select
+	frn.nome as fornecedor,
+	count(pdd.idproduto)
+from
+	produto pdd
+left outer join
+	fornecedor frn on pdd.idfornecedor = frn.idfornecedor
+group by
+	frn.nome
 
 --10.O nome do cliente e o somatório do valor do pedido (agrupado por cliente).
+select
+	cln.nome as cliente,
+	sum(pdd.valor) as total
+from
+	pedido pdd
+left outer join
+	cliente cln on pdd.idcliente = cln.idcliente
+group by
+	cln.nome
 
 --11.O nome do vendedor e o somatório do valor do pedido (agrupado por vendedor).
 
